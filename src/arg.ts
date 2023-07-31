@@ -18,9 +18,9 @@ export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 		else if (wasDoubleDash)
 			result.params.push(arg);
 		else if (arg.startsWith(DASH_SINGLE))
-			result.opts[arg.replace(REGEX_DASH_START, "")] = true;
+			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
 		else if (prevArg.startsWith(DASH_SINGLE))
-			result.opts[prevArg.replace(REGEX_DASH_START, "")] = arg;
+			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
 		else
 			result.params.push(arg);
 		prevArg = arg;
