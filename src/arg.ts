@@ -19,7 +19,7 @@ export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 			result.params.push(arg);
 		else if (arg.startsWith(DASH_SINGLE))
 			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
-		else if (prevArg.startsWith(DASH_SINGLE))
+		else if (!arg.startsWith(DASH_SINGLE) && prevArg.startsWith(DASH_SINGLE))
 			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
 		else
 			result.params.push(arg);
