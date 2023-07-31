@@ -7,7 +7,7 @@ const REGEX_DASH_START = /^-+/;
 export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 	const argsArray = (Array.isArray(args) ? args : split(args)).reduce(reduce, []);
 	const result: ArgsInfo<T> = {
-		params: [],
+		args: [],
 		opts: {}
 	};
 	let wasDoubleDash = false;
@@ -16,13 +16,13 @@ export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 		if (arg === DASH_DOUBLE) 
 			wasDoubleDash = true;
 		else if (wasDoubleDash)
-			result.params.push(arg);
+			result.args.push(arg);
 		else if (arg.startsWith(DASH_SINGLE))
 			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
 		else if (!arg.startsWith(DASH_SINGLE) && prevArg.startsWith(DASH_SINGLE))
 			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
 		else
-			result.params.push(arg);
+			result.args.push(arg);
 		prevArg = arg;
 	}
 	return result;
@@ -92,7 +92,7 @@ function unquoteString(data: string): string {
 }
 
 type ArgsInfo<T extends string> = {
-	params: string[];
+	args: string[];
 	opts: {
 		[K in T]?: true | string;
 	};
