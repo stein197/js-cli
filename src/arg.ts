@@ -69,11 +69,18 @@ function reduce(prev: string[], cur: string): string[] {
 	if (cur.startsWith(DASH_SINGLE)) {
 		const isDoubleDash = cur.startsWith(DASH_DOUBLE);
 		const [key, ...values] = cur.split(CHAR_EQUAL);
-		if (isDoubleDash)
+		const value = unquoteString(values.join(CHAR_EQUAL));
+		if (isDoubleDash) {
 			prev.push(key);
-		else
-			prev.push(...key.replace(DASH_SINGLE, "").split("").map(char => DASH_SINGLE + char));
-		prev.push(unquoteString(values.join(CHAR_EQUAL)));
+			if (value)
+				prev.push(value);
+		} else {
+			const [firstOpt, ...restOpts] = key.replace(DASH_SINGLE, "").split("").map(char => DASH_SINGLE + char);
+			prev.push(firstOpt);
+			if (value)
+				prev.push(value);
+			prev.push(...restOpts);
+		}
 	} else {
 		prev.push(cur);
 	}
