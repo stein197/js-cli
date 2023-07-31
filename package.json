@@ -1,0 +1,25 @@
+{
+  "name": "@stein197/cli",
+  "version": "1.0.0",
+  "description": "Command Line Interface utilities",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stein197/js-cli.git"
+  },
+  "keywords": [
+    "cli",
+    "command",
+    "line",
+    "interface"
+  ],
+  "author": "Nail' Gafarov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stein197/js-cli/issues"
+  },
+  "homepage": "https://github.com/stein197/js-cli#readme"
+}
