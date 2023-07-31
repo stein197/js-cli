@@ -4,6 +4,42 @@ const DASH_SINGLE = "-";
 const DASH_DOUBLE = "--";
 const REGEX_DASH_START = /^-+/;
 
+/**
+ * Parse the given string / array of strings as an arguments list into a structure of arguments and options. The
+ * function parses the data in the following way:
+ * - If it's a string without leading dashes, then it's considered as an argument (i.e. "param1", "param2")
+ * - If it's a string with a single leading dash, then it's considered as a shorthand option (i.e. "-abc" as a "-a",
+ *   "-b" and "-c")
+ * - If it's a string with a double leading dash, then it's considered as a single option with optional value that
+ *   goes after the option (i.e. "--user", "--user name", "--user=name")
+ * - If it's a "--" string, then all next strings are considered as arguments
+ * @param args Arguments to parse.
+ * @returns Parsed arguments.
+ * @example
+ * Parsing a string
+ * ```ts
+ * const data = parse("abc -d val1 -e=val2 -fg val3 --opt1 --opt2 val2 --opt3=val3 -- --opt4");
+ * data == {
+ * 	args: ["abc", "val3", "--opt4"],
+ * 	opts: {d: "val1", e: "val2", f: true, g: true, opt1: true, opt2: "val2", opt3: "val3"}
+ * }
+ * ```
+ * @example
+ * Parsing an array
+ * ```ts
+ * const data = parse(["abc", "-d", "val1", "-e=val2", "-fg", "val3", "--opt1", "--opt2", "val2", "--opt3=val3", "--", "--opt4"]);
+ * data == {
+ * 	args: ["abc", "val3", "--opt4"],
+ * 	opts: {d: "val1", e: "val2", f: true, g: true, opt1: true, opt2: "val2", opt3: "val3"}
+ * }
+ * ```
+ * @example
+ * Using generic type inference
+ * ```ts
+ * const data = parse<"opt1" | "opt2">("...");
+ * data.opts; // It could have "opt1" and "opt2" properties
+ * ```
+ */
 export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 	const argsArray = (Array.isArray(args) ? args : split(args)).reduce(reduce, []);
 	const result: ArgsInfo<T> = {
@@ -92,7 +128,15 @@ function unquoteString(data: string): string {
 }
 
 type ArgsInfo<T extends string> = {
+
+	/**
+	 * An array of positional arguments.
+	 */
 	args: string[];
+
+	/**
+	 * A map of options.
+	 */
 	opts: {
 		[K in T]?: true | string;
 	};
