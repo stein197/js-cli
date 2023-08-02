@@ -54,7 +54,7 @@ export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
 	let wasDoubleDash = false;
 	let prevArg = "";
 	for (const arg of argsArray) {
-		if (arg === DASH_DOUBLE) 
+		if (arg === DASH_DOUBLE)
 			wasDoubleDash = true;
 		else if (wasDoubleDash)
 			result.args.push(arg);
