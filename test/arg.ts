@@ -17,6 +17,11 @@ describe("arg.parse()", () => {
 		assert.deepStrictEqual(arg.parse("\"a\\\"b\""), expected);
 		assert.deepStrictEqual(arg.parse(["\"a\\\"b\""]), expected);
 	});
+	it("\"a\\\\\\\\b\" == [\"a\\\\b\"]", () => {
+		const expected = {args: ["a\\\\b"], opts: {}};
+		assert.deepStrictEqual(arg.parse("\"a\\\\\\\\b\""), expected);
+		assert.deepStrictEqual(arg.parse(["\"a\\\\\\\\b\""]), expected);
+	});
 	it("\"-abc\" == {a: true, b: true, c: true}", () => {
 		const expected = {args: [], opts: {a: true, b: true, c: true}};
 		assert.deepStrictEqual(arg.parse("-abc"), expected);
