@@ -4,8 +4,7 @@ const DASH_SINGLE = "-";
 const DASH_DOUBLE = "--";
 const REGEX_DASH_START = /^-+/;
 const OPTIONS_DEFAULT: Options = {
-	no: true,
-	flagValues: "none"
+	no: true
 };
 
 /**
@@ -145,23 +144,6 @@ type Options = {
 	 * ```
 	 */
 	no: boolean;
-
-	/**
-	 * How to consider arguments that go after arrays of flags (i.e. "-abc"). There are three options:
-	 * - `none`. The argument after a flag array is considered as a separate argument
-	 * - `first`. The argument after a flag array is considered as a value for the first flag
-	 * - `last`. The argument after a flag array is considered as a value for the last flag
-	 * - `all`. The arguments after a flag array is considered as values per each flag
-	 * @defaultValue "none".
-	 * @example
-	 * ```ts
-	 * parse("-abc val", {flagValues: "none"}).opts == {a: true, b: true, c: false}
-	 * parse("-abc val", {flagValues: "first"}).opts == {a: "val", b: true, c: false}
-	 * parse("-abc val", {flagValues: "last"}).opts == {a: true, b: true, c: "val"}
-	 * parse("-abc val1 val2", {flagValues: "all"}).opts == {a: "val1", b: "val2", c: true}
-	 * ```
-	 */
-	flagValues: "none" | "first" | "last" | "all";
 }
 
 type ArgsInfo<T extends string> = {

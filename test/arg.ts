@@ -164,4 +164,22 @@ describe("arg.parse()", () => {
 		assert.deepStrictEqual(arg.parse("abc -d val1 -e=val2 -fg def --opt1 --opt2 val2 --opt3=val3 --opt4 \"a b \\\" c\" -- --opt5"), expected);
 		assert.deepStrictEqual(arg.parse(["abc", "-d", "val1", "-e=val2", "-fg", "def", "--opt1", "--opt2", "val2", "--opt3=val3", "--opt4=\"a b \\\" c\"", "--", "--opt5"]), expected);
 	});
+	describe("Options", () => {
+		describe("no", () => {
+			it("no: true", () => {
+				const expected = {args: ["val"], opts: {abc: false}};
+				assert.deepStrictEqual(arg.parse("--no-abc val", {no: true}), expected);
+				assert.deepStrictEqual(arg.parse(["--no-abc", "val"], {no: true}), expected);
+				assert.deepStrictEqual(arg.parse("--no-abc=val", {no: true}), expected);
+				assert.deepStrictEqual(arg.parse(["--no-abc=val"], {no: true}), expected);
+			});
+			it("no: false", () => {
+				const expected = {args: [], opts: {"no-abc": "val"}};
+				assert.deepStrictEqual(arg.parse("--no-abc val", {no: false}), expected);
+				assert.deepStrictEqual(arg.parse(["--no-abc", "val"], {no: false}), expected);
+				assert.deepStrictEqual(arg.parse("--no-abc=val", {no: false}), expected);
+				assert.deepStrictEqual(arg.parse(["--no-abc=val"], {no: false}), expected);
+			});
+		});
+	});
 });
