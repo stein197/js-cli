@@ -4,7 +4,7 @@ import * as arg from "../src/arg";
 describe("arg.parse()", () => {
 	it.skip("\"\" == []");
 	it.skip("\"a b c\" == [\"a\", \"b\", \"c\"]");
-
+	it.skip("\"a\\\"b\" == [\"a\\\"b\"]");
 	it.skip("\"-abc\" == {a: true, b: true, c: true}");
 	it.skip("\"-a -b\" == {a: true, b: true, c: true}");
 	it.skip("\"-abc string\" == {a: true, b: true, c: true} & [\"string\"]");
@@ -18,7 +18,6 @@ describe("arg.parse()", () => {
 	it.skip("\"-a \"a b c\"\" == {a: \"a b c\"}");
 	it.skip("\"-a=\"\"\" == {a: \"\"}");
 	it.skip("\"-a \"\"\" == {a: \"\"}");
-
 	it.skip("\"--abc --def\" == {abc: true, def: true}");
 	it.skip("\"string --abc\" == {abc: true} & [\"string\"]");
 	it.skip("\"--abc val1\" == {abc: \"val1\"}");
@@ -30,7 +29,6 @@ describe("arg.parse()", () => {
 	it.skip("\"--abc \"a b c\"\" == {abc: \"a b c\"}");
 	it.skip("\"--abc=\"\"\" == {abc: \"\"}");
 	it.skip("\"--abc \"\"\" == {abc: \"\"}");
-
 	it.skip("\"-- --abc\" == [\"--abc\"]");
 	it("Should correctly parse complex example", () => {
 		const result = {
