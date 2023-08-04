@@ -3,6 +3,10 @@ const CHAR_EQUAL = "=";
 const DASH_SINGLE = "-";
 const DASH_DOUBLE = "--";
 const REGEX_DASH_START = /^-+/;
+const OPTIONS_DEFAULT: Options = {
+	no: true,
+	flagValues: "none"
+};
 
 /**
  * Parse the given string / array of strings as an arguments list into a structure of arguments and options. The
@@ -45,7 +49,8 @@ const REGEX_DASH_START = /^-+/;
  * data.opts; // It could have "opt1" and "opt2" properties
  * ```
  */
-export function parse<T extends string>(args: string | string[]): ArgsInfo<T> {
+export function parse<T extends string>(args: string | string[], options: Partial<Options> = OPTIONS_DEFAULT): ArgsInfo<T> {
+	options = options === OPTIONS_DEFAULT ? OPTIONS_DEFAULT : {...OPTIONS_DEFAULT, ...options};
 	const argsArray = (Array.isArray(args) ? args : split(args)).reduce(reduce, []);
 	const result: ArgsInfo<T> = {
 		args: [],
@@ -127,6 +132,38 @@ function unquoteString(data: string): string {
 	return data.startsWith(CHAR_QUOTE) && data.endsWith(CHAR_QUOTE) ? data.slice(1, -1) : data;
 }
 
+// TODO: Test
+type Options = {
+
+	/**
+	 * Consider options that start with "--no-" prefix as flags with `false` value.
+	 * @defaultValue `true`.
+	 * @example
+	 * ```ts
+	 * parse("--no-data", {no: false}).opts == {"no-data": true}
+	 * parse("--no-data", {no: true}).opts == {data: false}
+	 * ```
+	 */
+	no: boolean;
+
+	/**
+	 * How to consider arguments that go after arrays of flags (i.e. "-abc"). There are three options:
+	 * - `none`. The argument after a flag array is considered as a separate argument
+	 * - `first`. The argument after a flag array is considered as a value for the first flag
+	 * - `last`. The argument after a flag array is considered as a value for the last flag
+	 * - `all`. The arguments after a flag array is considered as values per each flag
+	 * @defaultValue "none".
+	 * @example
+	 * ```ts
+	 * parse("-abc val", {flagValues: "none"}).opts == {a: true, b: true, c: false}
+	 * parse("-abc val", {flagValues: "first"}).opts == {a: "val", b: true, c: false}
+	 * parse("-abc val", {flagValues: "last"}).opts == {a: true, b: true, c: "val"}
+	 * parse("-abc val1 val2", {flagValues: "all"}).opts == {a: "val1", b: "val2", c: true}
+	 * ```
+	 */
+	flagValues: "none" | "first" | "last" | "all";
+}
+
 type ArgsInfo<T extends string> = {
 
 	/**
@@ -138,6 +175,6 @@ type ArgsInfo<T extends string> = {
 	 * A map of options.
 	 */
 	opts: {
-		[K in T]?: true | string;
+		[K in T]?: boolean | string;
 	};
 }
