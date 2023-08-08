@@ -84,7 +84,7 @@ describe("arg.parse()", () => {
 	});
 	it("\"-a \"\"\" == {a: \"\"}", () => {
 		const expected = {args: [], opts: {a: ""}};
-		// assert.deepStrictEqual(arg.parse("-a \"\""), expected);
+		assert.deepStrictEqual(arg.parse("-a \"\""), expected);
 		assert.deepStrictEqual(arg.parse(["-a", ""]), expected);
 	});
 	it("\"--abc --def\" == {abc: true, def: true}", () => {

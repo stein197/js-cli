@@ -83,7 +83,6 @@ function split(args: string): string[] {
 	let isQuotes = false;
 	let isEscape = false;
 	let curArg = "";
-	let prevChar = "";
 	for (const char of args) {
 		switch (char) {
 			case " ":
@@ -114,7 +113,6 @@ function split(args: string): string[] {
 				curArg += char;
 				isEscape = false;
 		}
-		prevChar = char;
 	}
 	if (curArg)
 		result.push(curArg);
