@@ -124,8 +124,7 @@ function reduce(prev: string[], cur: string): string[] {
 			prev.push(value);
 	} else {
 		const value = unquoteString(cur);
-		if (value)
-			prev.push(value);
+		prev.push(value);
 	}
 	return prev;
 }
