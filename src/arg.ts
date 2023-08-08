@@ -94,10 +94,8 @@ function split(args: string): string[] {
 					curArg += char;
 					continue;
 				}
-				if (curArg) {
-					result.push(curArg);
-					curArg = "";
-				}
+				result.push(curArg);
+				curArg = "";
 				isEscape = false;
 				break;
 			case "\"":
