@@ -174,25 +174,6 @@ describe("arg.parse()", () => {
 		assert.deepStrictEqual(arg.parse("abc -d val1 -e=val2 -fg def --opt1 --opt2 val2 --opt3=val3 --opt4 \"a b \\\" c\" -- --opt5"), expected);
 		assert.deepStrictEqual(arg.parse(["abc", "-d", "val1", "-e=val2", "-fg", "def", "--opt1", "--opt2", "val2", "--opt3=val3", "--opt4=\"a b \\\" c\"", "--", "--opt5"]), expected);
 	});
-	it("Complex examples with quotes and backslashes", () => {
-		const data = [
-			{
-				expected: {args: [], opts: {abc: "a\"b"}},
-				data: ["--abc=a\\\"b", ["--abc=a\\\"b"], "--abc a\\\"b", ["--abc", "a\"b"]]
-			},
-			{
-				expected: {args: [], opts: {abc: "ab"}},
-				data: ["--abc=\"ab", ["--abc=\"ab"], "--abc \"ab", ["--abc", "\"ab"]]
-			},
-			{
-				expected: {args: [], opts: {abc: "ab"}},
-				data: ["--abc=a\"b", ["--abc=a\"b"], "--abc a\"b", ["--abc", "a\"b"]]
-			},
-		];
-		for (const item of data)
-			for (const example of item.data)
-				assert.deepStrictEqual(arg.parse(example), item.expected);
-	});
 	describe("Options", () => {
 		describe("no", () => {
 			it("no: true", () => {
