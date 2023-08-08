@@ -152,6 +152,11 @@ describe("arg.parse()", () => {
 		assert.deepStrictEqual(arg.parse("-- --abc"), expected);
 		assert.deepStrictEqual(arg.parse(["--", "--abc"]), expected);
 	});
+	it("\"--abc \"\\\"\\\"\"\" == {abc: \"\\\"\\\"\"}", () => {
+		const expected = {args: [], opts: {abc: "\"\""}};
+		assert.deepStrictEqual(arg.parse("--abc \"\\\"\\\"\""), expected);
+		assert.deepStrictEqual(arg.parse(["--abc", "\"\""]), expected);
+	});
 	it("Should correctly parse complex example", () => {
 		const expected = {
 			args: ["abc", "def", "--opt5"],
