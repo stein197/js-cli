@@ -133,7 +133,7 @@ function reduce(prev: string[], cur: string): string[] {
 }
 
 function unquoteString(string: string): string {
-	return string.startsWith(CHAR_QUOTE) && string.endsWith(CHAR_QUOTE) ? string.slice(1, -1) : string;
+	return string.startsWith(CHAR_QUOTE) && string.endsWith(CHAR_QUOTE) ? string.slice(1, -1).replaceAll(/\\(.)/g, "$1") : string;
 }
 
 type Options = {
