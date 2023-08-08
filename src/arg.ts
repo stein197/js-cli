@@ -69,7 +69,7 @@ export function parse<T extends string>(args: string | string[], options: Partia
 			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
 		else if (arg.startsWith(DASH_SINGLE))
 			arg.replace(REGEX_DASH_START, "").split("").forEach(char => result.opts[char as T] = true);
-		else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !arg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2)
+		else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !prevArg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2)
 			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
 		else
 			result.args.push(arg);
