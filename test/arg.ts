@@ -15,12 +15,12 @@ describe("arg.parse()", () => {
 	it("\"a\\\"b\" == [\"a\\\"b\"]", () => {
 		const expected = {args: ["a\"b"], opts: {}};
 		assert.deepStrictEqual(arg.parse("\"a\\\"b\""), expected);
-		assert.deepStrictEqual(arg.parse(["\"a\\\"b\""]), expected);
+		assert.deepStrictEqual(arg.parse(["a\"b"]), expected);
 	});
 	it("\"a\\\\\\\\b\" == [\"a\\\\b\"]", () => {
 		const expected = {args: ["a\\\\b"], opts: {}};
 		assert.deepStrictEqual(arg.parse("\"a\\\\\\\\b\""), expected);
-		assert.deepStrictEqual(arg.parse(["\"a\\\\\\\\b\""]), expected);
+		assert.deepStrictEqual(arg.parse(["a\\\\b"]), expected);
 	});
 	it("\"-abc\" == {a: true, b: true, c: true}", () => {
 		const expected = {args: [], opts: {a: true, b: true, c: true}};
@@ -85,7 +85,7 @@ describe("arg.parse()", () => {
 	it("\"-a \"\"\" == {a: \"\"}", () => {
 		const expected = {args: [], opts: {a: ""}};
 		assert.deepStrictEqual(arg.parse("-a \"\""), expected);
-		assert.deepStrictEqual(arg.parse(["-a", "\"\""]), expected);
+		assert.deepStrictEqual(arg.parse(["-a", ""]), expected);
 	});
 	it("\"--abc --def\" == {abc: true, def: true}", () => {
 		const expected = {args: [], opts: {abc: true, def: true}};

@@ -80,14 +80,17 @@ export function parse<T extends string>(args: string | string[], options: Partia
 
 function split(args: string): string[] {
 	const result: string[] = [];
-	let isInsideQuotes = false;
+	let isQuotes = false;
+	let isEscape = false;
 	let curArg = "";
 	let prevChar = "";
 	for (const char of args) {
 		switch (char) {
 			case " ":
 			case "\t":
-				if (isInsideQuotes) {
+			case "\n":
+			case "\r":
+				if (isQuotes || isEscape) {
 					curArg += char;
 					continue;
 				}
@@ -95,18 +98,23 @@ function split(args: string): string[] {
 					result.push(curArg);
 					curArg = "";
 				}
+				isEscape = false;
 				break;
 			case "\"":
-				curArg += char;
-				if (prevChar !== "\\")
-					isInsideQuotes = !isInsideQuotes;
+				if (isEscape)
+					curArg += char;
+				else
+					isQuotes = !isQuotes;
+				isEscape = false;
 				break;
 			case "\\":
-				if (prevChar === "\\")
+				if (isEscape)
 					curArg += char;
+				isEscape = !isEscape;
 				break;
 			default:
 				curArg += char;
+				isEscape = false;
 		}
 		prevChar = char;
 	}
@@ -118,22 +126,16 @@ function split(args: string): string[] {
 function reduce(prev: string[], cur: string): string[] {
 	if (cur.startsWith(DASH_SINGLE)) {
 		const [key, ...values] = cur.split(CHAR_EQUAL);
-		const value = unquoteString(values.join(CHAR_EQUAL));
+		const value = values.join(CHAR_EQUAL);
 		prev.push(key);
 		if (values.length)
 			prev.push(value);
 	} else {
-		const value = unquoteString(cur);
-		prev.push(value);
+		prev.push(cur);
 	}
 	return prev;
 }
 
-function unquoteString(data: string): string {
-	return data.startsWith(CHAR_QUOTE) && data.endsWith(CHAR_QUOTE) ? data.slice(1, -1) : data;
-}
-
-// TODO: Test
 type Options = {
 
 	/**
