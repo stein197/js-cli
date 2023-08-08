@@ -126,7 +126,7 @@ function split(args: string): string[] {
 function reduce(prev: string[], cur: string): string[] {
 	if (cur.startsWith(DASH_SINGLE)) {
 		const [key, ...values] = cur.split(CHAR_EQUAL);
-		const value = values.join(CHAR_EQUAL);
+		const value = unquoteString(values.join(CHAR_EQUAL));
 		prev.push(key);
 		if (values.length)
 			prev.push(value);
@@ -134,6 +134,10 @@ function reduce(prev: string[], cur: string): string[] {
 		prev.push(cur);
 	}
 	return prev;
+}
+
+function unquoteString(string: string): string {
+	return string.startsWith(CHAR_QUOTE) && string.endsWith(CHAR_QUOTE) ? string.slice(1, -1) : string;
 }
 
 type Options = {
