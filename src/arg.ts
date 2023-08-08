@@ -3,6 +3,7 @@ const CHAR_EQUAL = "=";
 const DASH_SINGLE = "-";
 const DASH_DOUBLE = "--";
 const REGEX_DASH_START = /^-+/;
+const PREFIX_NO = "--no-";
 const OPTIONS_DEFAULT: Options = {
 	no: true
 };
@@ -62,11 +63,13 @@ export function parse<T extends string>(args: string | string[], options: Partia
 			wasDoubleDash = true;
 		else if (wasDoubleDash)
 			result.args.push(arg);
+		else if (options.no && arg.startsWith(PREFIX_NO))
+			result.opts[arg.replace(PREFIX_NO, "") as T] = false;
 		else if (arg.startsWith(DASH_DOUBLE))
 			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
 		else if (arg.startsWith(DASH_SINGLE))
 			arg.replace(REGEX_DASH_START, "").split("").forEach(char => result.opts[char as T] = true);
-		else if (!arg.startsWith(DASH_SINGLE) && (prevArg.startsWith(DASH_DOUBLE) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2))
+		else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !arg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2)
 			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
 		else
 			result.args.push(arg);
@@ -117,7 +120,7 @@ function reduce(prev: string[], cur: string): string[] {
 		const [key, ...values] = cur.split(CHAR_EQUAL);
 		const value = unquoteString(values.join(CHAR_EQUAL));
 		prev.push(key);
-		if (value)
+		if (values.length)
 			prev.push(value);
 	} else {
 		const value = unquoteString(cur);
