@@ -80,10 +80,12 @@ export function parse<T extends string>(args: string | string[], options: Partia
 
 function split(args: string): string[] {
 	const result: string[] = [];
+	if (!args)
+		return result;
 	let isQuotes = false;
 	let isEscape = false;
 	let curArg = "";
-	for (const char of args) {
+	for (const char of args)
 		switch (char) {
 			case " ":
 			case "\t":
@@ -93,6 +95,7 @@ function split(args: string): string[] {
 					curArg += char;
 					continue;
 				}
+				if (curArg)
 				result.push(curArg);
 				curArg = "";
 				isEscape = false;
@@ -113,9 +116,7 @@ function split(args: string): string[] {
 				curArg += char;
 				isEscape = false;
 		}
-	}
-	if (curArg)
-		result.push(curArg);
+	result.push(curArg);
 	return result;
 }
 
