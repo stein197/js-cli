@@ -5,7 +5,8 @@ const DASH_DOUBLE = "--";
 const REGEX_DASH_START = /^-+/;
 const PREFIX_NO = "--no-";
 const OPTIONS_DEFAULT: Options = {
-	no: true
+	no: true,
+	multiple: false
 };
 
 /**
@@ -59,20 +60,32 @@ export function parse<T extends string>(args: string | string[], options: Partia
 	let wasDoubleDash = false;
 	let prevArg = "";
 	for (const arg of argsArray) {
-		if (arg === DASH_DOUBLE)
+		if (arg === DASH_DOUBLE) {
 			wasDoubleDash = true;
-		else if (wasDoubleDash)
+		} else if (wasDoubleDash) {
 			result.args.push(arg);
-		else if (options.no && arg.startsWith(PREFIX_NO))
+		} else if (options.no && arg.startsWith(PREFIX_NO)) {
 			result.opts[arg.replace(PREFIX_NO, "") as T] = false;
-		else if (arg.startsWith(DASH_DOUBLE))
-			result.opts[arg.replace(REGEX_DASH_START, "") as T] = true;
-		else if (arg.startsWith(DASH_SINGLE))
-			arg.replace(REGEX_DASH_START, "").split("").forEach(char => result.opts[char as T] = true);
-		else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !prevArg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2)
-			result.opts[prevArg.replace(REGEX_DASH_START, "") as T] = arg;
-		else
+		} else if (arg.startsWith(DASH_DOUBLE)) {
+			const name = arg.replace(REGEX_DASH_START, "") as T;
+			if (!options.multiple || !(name in result.opts))
+				result.opts[name] = true;
+		} else if (arg.startsWith(DASH_SINGLE)) {
+			arg.replace(REGEX_DASH_START, "").split("").forEach(char => (!options.multiple || !(char in result.opts)) && (result.opts[char as T] = true));
+		} else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !prevArg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2) {
+			const name = prevArg.replace(REGEX_DASH_START, "") as T;
+			if (options.multiple)
+				if (Array.isArray(result.opts[name]))
+					(result.opts[name] as string[]).push(arg);
+				else if (typeof result.opts[name] === "string")
+					result.opts[name] = [result.opts[name] as string, arg];
+				else
+					result.opts[name] = arg;
+			else
+				result.opts[name] = arg;
+		} else {
 			result.args.push(arg);
+		}
 		prevArg = arg;
 	}
 	return result;
@@ -148,6 +161,17 @@ type Options = {
 	 * ```
 	 */
 	no: boolean;
+
+	/**
+	 * Allow options to occure more than once. In that case, instead of overriding, an array of values is created.
+	 * @defaultValue `false`.
+	 * @example
+	 * ```ts
+	 * parse("-a 1 -a 2", {multiple: false}).opts == {a: "2"}
+	 * parse("-a 1 -a 2", {multiple: true}).opts == {a: ["1", "2"]}
+	 * ```
+	 */
+	multiple: boolean;
 }
 
 type ArgsInfo<T extends string> = {
@@ -161,6 +185,6 @@ type ArgsInfo<T extends string> = {
 	 * A map of options.
 	 */
 	opts: {
-		[K in T]?: boolean | string;
+		[K in T]?: boolean | string | string[];
 	};
 }
