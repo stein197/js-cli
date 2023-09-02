@@ -6,6 +6,7 @@ const REGEX_DASH_START = /^-+/;
 const PREFIX_NO = "--no-";
 const OPTIONS_DEFAULT: Options = {
 	no: true,
+	flagArray: true,
 	multiple: false
 };
 
@@ -66,13 +67,13 @@ export function parse<T extends string>(args: string | string[], options: Partia
 			result.args.push(arg);
 		} else if (options.no && arg.startsWith(PREFIX_NO)) {
 			result.opts[arg.replace(PREFIX_NO, "") as T] = false;
-		} else if (arg.startsWith(DASH_DOUBLE)) {
+		} else if (arg.startsWith(DASH_DOUBLE) || arg.startsWith(DASH_SINGLE) && !options.flagArray) {
 			const name = arg.replace(REGEX_DASH_START, "") as T;
 			if (!options.multiple || !(name in result.opts))
 				result.opts[name] = true;
-		} else if (arg.startsWith(DASH_SINGLE)) {
+		} else if (arg.startsWith(DASH_SINGLE) && options.flagArray) {
 			arg.replace(REGEX_DASH_START, "").split("").forEach(char => (!options.multiple || !(char in result.opts)) && (result.opts[char as T] = true));
-		} else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !prevArg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2) {
+		} else if (prevArg.startsWith(DASH_DOUBLE) && (!options.no || !prevArg.startsWith(PREFIX_NO)) || prevArg.startsWith(DASH_SINGLE) && prevArg.length === 2 || prevArg.startsWith(DASH_SINGLE) && !options.flagArray) {
 			const name = prevArg.replace(REGEX_DASH_START, "") as T;
 			if (options.multiple)
 				if (Array.isArray(result.opts[name]))
@@ -161,6 +162,18 @@ type Options = {
 	 * ```
 	 */
 	no: boolean;
+
+	/**
+	 * Consider arguments that start with single dash as an array of flags. Otherwise those arguments are treated the
+	 * same way as the arguments with double dash.
+	 * @defaultValue `true`.
+	 * @example
+	 * ```ts
+	 * parse("-key", {flagArray: false}).opts == {key: true}
+	 * parse("-key", {flagArray: true}).opts == {k: true, e: true, y: true}
+	 * ```
+	 */
+	flagArray: boolean;
 
 	/**
 	 * Allow options to occure more than once. In that case, instead of overriding, an array of values is created.

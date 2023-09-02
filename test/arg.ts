@@ -191,6 +191,18 @@ describe("arg.parse()", () => {
 				assert.deepStrictEqual(arg.parse(["--no-abc=val"], {no: true}), expected);
 			});
 		});
+		describe("flagArray", () => {
+			it("flagArray: true", () => {
+				const expected = {args: [], opts: {a: true, b: true, c: true}};
+				assert.deepStrictEqual(arg.parse("-abc", {flagArray: true}), expected);
+				assert.deepStrictEqual(arg.parse(["-abc"], {flagArray: true}), expected);
+			});
+			it("flagArray: false", () => {
+				const expected = {args: [], opts: {abc: "def", def: true}};
+				assert.deepStrictEqual(arg.parse("-abc def -def", {flagArray: false}), expected);
+				assert.deepStrictEqual(arg.parse(["-abc", "def", "-def"], {flagArray: false}), expected);
+			});
+		});
 		describe("multiple", () => {
 			it("multiple: false", () => {
 				const expected = {args: [], opts: {a: true, b: "1", c: "3", opt1: true, opt2: "val2", opt3: "val4"}};
